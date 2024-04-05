@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Portfolio Website</title>
+    <link rel="stylesheet" href="noteswriter.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+</head>
+<body>
+       <div id="header">
+        <div class="container">
+            <nav>
+                <img src="logo.png" class="logo">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#">ToDoList</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+
+            </nav>
+            
+        </div>
+    </div>
+    <div class="notes-container">
+        <h1>Notes Writer</h1>
+        <input type="text" id="noteHeading" placeholder="Enter the heading of your note...">
+        <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+        <button onclick="saveNote()">Save Note</button>
+    </div>
+
+            <div class="copyright">
+            <p>Copyright © Well Programmer's.</p>
+        </div>
+     </div>
+
+    <script>
+        function saveNote() {
+            const noteHeading = document.getElementById('noteHeading').value.trim();
+            const noteContent = document.getElementById('noteContent').value.trim();
+
+            if (noteHeading === '' || noteContent === '') {
+                alert('Note heading and content cannot be empty!');
+                return;
+            }
+
+            const date = new Date().toLocaleString();
+            const note = {
+                heading: noteHeading,
+                content: noteContent,
+                date: date
+            };
+
+            const existingNotes = JSON.parse(localStorage.getItem('notes') || '[]');
+            existingNotes.push(note);
+            localStorage.setItem('notes', JSON.stringify(existingNotes));
+
+            const confirmed = window.confirm('Do you want to download the PDF?');
+            if (confirmed) {
+                generateAndDownloadPDF(note);
+                alert('Note saved successfully!');
+            }
+        }
+
+        function generateAndDownloadPDF(note) {
+    const docDefinition = {
+        content: [
+            { text: 'Date and Time: ' + note.date, style: 'date' },
+            { text: note.heading, style: 'header' },
+            { text: '' + note.content, style: 'note' }
+        ],
+        styles: {
+            date: {
+                fontSize: 12,
+                marginBottom: 10
+            },
+            header: {
+                fontSize: 18,
+                bold: true,
+                alignment: 'center',
+                margin: [0, 20, 0, 10] 
+            },
+            note: {
+                fontSize: 14,
+                marginBottom: 10
+            }
+        }
+    };
+
+            pdfMake.createPdf(docDefinition).download('note.pdf');
+        }
+    </script>
+<body>
+<html>
+    
+
